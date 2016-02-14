@@ -21,10 +21,10 @@ class mailer {
 	const MAILER_USER_NAME = MAILER_USER_NAME;
 	const MAILER_PASSWD = MAILER_PASSWD;
 	private $mail_group = array();
-	private $mailer;
+	private $base_mailer;
 
 	public function __construct() {
-		$this->mailer_init();
+		$this->base_mailer_init();
 	}
 
     /*
@@ -45,24 +45,24 @@ class mailer {
 		return;
 	}
 
-	private function mailer_init() {
-		$this->mailer = new PHPMailer;
-		$this->mailer->isSMTP();
+	private function base_mailer_init() {
+		$this->base_mailer = new PHPMailer;
+		$this->base_mailer->isSMTP();
 
 		//Enable SMTP debugging
 		// 0 = off (for production use)
 		// 1 = client messages
 		// 2 = client and server messages
-		$this->mailer->SMTPDebug = 0;
-		$this->mailer->Debugoutput = 'html';
+		$this->base_mailer->SMTPDebug = 0;
+		$this->base_mailer->Debugoutput = 'html';
 
-		$this->mailer->Host = self::MAILER_HOST;
-		$this->mailer->Port = self::MAILER_PORT;
+		$this->base_mailer->Host = self::MAILER_HOST;
+		$this->base_mailer->Port = self::MAILER_PORT;
 
-		$this->mailer->SMTPAuth = true;
-		$this->mailer->Username = self::MAILER_USER;
-		$this->mailer->Password = self::MAILER_PASSWD;
-		$this->mailer->setFrom(self::MAILER_USER, self::MAILER_USER_NAME);
+		$this->base_mailer->SMTPAuth = true;
+		$this->base_mailer->Username = self::MAILER_USER;
+		$this->base_mailer->Password = self::MAILER_PASSWD;
+		$this->base_mailer->setFrom(self::MAILER_USER, self::MAILER_USER_NAME);
 
 		include(CURRENT_DIR.'../config/config_group.php');
 		$this->mail_group = $_MAIL_GROUP;
@@ -73,7 +73,7 @@ class mailer {
 		foreach ($this->mail_group as $group => $members) {
 			if ($group==$send_group) {
 				foreach ($members as $member) {
-					$this->mailer->addAddress($member['email'], $member['name']);
+					$this->base_mailer->addAddress($member['email'], $member['name']);
 				}
 			}
 		}
@@ -81,12 +81,12 @@ class mailer {
 	}
 
 	private function send_mail($data, $template='template_1.html') {
-		$this->mailer->Subject = '负载告警-'.$data['machine'];
-		$this->mailer->msgHTML(file_get_contents($template), dirname(__FILE__));
-		$this->mailer->Body = str_replace('[machine]', $data['machine'], $this->mailer->Body);
-		$this->mailer->Body = str_replace('[threshold]', $data['threshold'], $this->mailer->Body);
-		$this->mailer->Body = str_replace('[job_detail]', $data['job_detail'], $this->mailer->Body);
-		return $this->mailer->send();
+		$this->base_mailer->Subject = '负载告警-'.$data['machine'];
+		$this->base_mailer->msgHTML(file_get_contents($template), dirname(__FILE__));
+		$this->base_mailer->Body = str_replace('[machine]', $data['machine'], $this->base_mailer->Body);
+		$this->base_mailer->Body = str_replace('[threshold]', $data['threshold'], $this->base_mailer->Body);
+		$this->base_mailer->Body = str_replace('[job_detail]', $data['job_detail'], $this->base_mailer->Body);
+		return $this->base_mailer->send();
 	}
 
 	public function run($job, &$log) {
@@ -104,9 +104,8 @@ class mailer {
 		if ($this->send_mail($data)) {
 			$send_result =  'Message sent';
 		} else {
-			$send_result =  'Mailer Error: '.$this->mailer->ErrorInfo;
+			$send_result =  'Mailer Error: '.$this->base_mailer->ErrorInfo;
 		}
-		echo $send_result."\n";
 		return 'OK';
 	}
 }
