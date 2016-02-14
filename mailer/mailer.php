@@ -11,8 +11,7 @@ include(CURRENT_DIR.'../base.php');
  * */
 class mailer {
 
-	const BASE_NAME = '';
-	const LOG_PATH = '';
+	const LOG_PATH = LOG_PATH;
 	const DEBUG = false;
 
 	const MAILER_HOST = MAILER_HOST;
@@ -33,9 +32,9 @@ class mailer {
      * */
 	private function do_log($log_type, $log_line='') {
 		switch ($log_type) {
-			case 'run':
+			case 'mailer':
 				$currDay = date('Y-m-d', time());
-				$log_file = self::LOG_PATH."run_{$currDay}.log";
+				$log_file = self::LOG_PATH."mailer_{$currDay}.log";
 
 				$time = date('Y-m-d H:i:s', time());
 				$log = "[$time][$log_line]\n";
@@ -102,10 +101,11 @@ class mailer {
 			'job_detail' => $tmp_data[2],
 		);
 		if ($this->send_mail($data)) {
-			$send_result =  'Message sent';
+			$send_result =  $data['job_detail'].' Message sent';
 		} else {
-			$send_result =  'Mailer Error: '.$this->base_mailer->ErrorInfo;
+			$send_result =  $data['job_detail'].' Mailer Error: '.$this->base_mailer->ErrorInfo;
 		}
+		$this->do_log('mailer', $send_result);
 		return 'OK';
 	}
 }
