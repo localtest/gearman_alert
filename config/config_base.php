@@ -7,3 +7,5 @@
 			'interval' => 5,
 		),
 	);
+
+	define('LOG_PATH', BASE_NAME.'run/');
