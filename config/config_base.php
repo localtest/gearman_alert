@@ -1,5 +1,6 @@
 <?php
 
+	define('LOG_PATH', BASE_NAME.'run/');
 	$monitors = array(
 		array(
 			'host' => '',
@@ -7,5 +8,3 @@
 			'interval' => 5,
 		),
 	);
-
-	define('LOG_PATH', BASE_NAME.'run/');
