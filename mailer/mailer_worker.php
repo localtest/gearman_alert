@@ -9,7 +9,7 @@ include(CURRENT_DIR.'../base.php');
  * 发送告警邮件
  *
  * */
-class mailer {
+class mailer_worker {
 
 	const LOG_PATH = LOG_PATH;
 	const DEBUG = false;
