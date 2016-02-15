@@ -138,16 +138,18 @@ class alert {
 				$worker = $this->parse_worker($filename, $currDay);
 				$threshod = $this->_THRESHOD[$worker['host']][$worker['worker']];
 				$result = $this->parseAndCalculate($filename);
-				//Eg: all|127.0.0.1:4730-123/205/200
+				//Eg: all|127.0.0.1:4730-20/20/20-3/3/3
 				$maillog = $threshod['send_group'].'|'.$worker['host'];
 				
-				$threshod_log = '';
-				$threshod_log .= (isset($result['1min']) && $result['1min']<$threshod['1min']) ? $result['1min'].'('.$threshod['1min'].')' : 'none';
-				$threshod_log .= '/';
-				$threshod_log .= (isset($result['5min']) && $result['5min']<$threshod['5min']) ? $result['5min'].'('.$threshod['5min'].')' : 'none';
-				$threshod_log .= '/';
-				$threshod_log .= (isset($result['15min']) && $result['15min']<$threshod['15min']) ? $result['15min'].'('.$threshod['5min'].')' : 'none';
-				$maillog .= '-'.$threshod_log;
+				$alert_log = '';
+				$alert_log .= (isset($result['1min']) && $result['1min']<$threshod['1min']) ? $result['1min'].'('.$threshod['1min'].')' : 'none';
+				$alert_log .= '/';
+				$alert_log .= (isset($result['5min']) && $result['5min']<$threshod['5min']) ? $result['5min'].'('.$threshod['5min'].')' : 'none';
+				$alert_log .= '/';
+				$alert_log .= (isset($result['15min']) && $result['15min']<$threshod['15min']) ? $result['15min'].'('.$threshod['15min'].')' : 'none';
+				$threshod_log = $threshod['1min'].'/'.$threshod['5min'].'/'.$threshod['15min'];
+
+				$maillog .= '-'.$threshod_log.'-'.$alert_log;
 				if ($threshod_log != 'none/none/none') {
 					$this->gearman->addTaskBackground('mailer_worker', $maillog, 'mailer_worker');
 					$submit = $this->submit_mission();
