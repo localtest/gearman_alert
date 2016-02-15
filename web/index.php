@@ -10,4 +10,6 @@
 			'link' => WEB_DOMAIN.'job_list.php?job_str='.$monitor_item['host'].':'.$monitor_item['port'],
 		);
 	}
+	$title = '服务监控';
+	$show_return = false;
 	include(CURRENT_DIR.'template/list.php');
