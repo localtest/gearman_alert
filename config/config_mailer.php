@@ -5,12 +5,3 @@
 	define('MAILER_USER', 'from@test.com');
 	define('MAILER_USER_NAME', 'monitor');
 	define('MAILER_PASSWD', 'passwd');
-
-	$mail_group = array(
-		'all' => array(
-			array(
-				'name' => 'your name',
-				'email' => 'your email',
-			),
-		),
-	);
