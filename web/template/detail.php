@@ -14,21 +14,11 @@
 <nav class="navbar navbar-default">
 <div class="container-fluid">
 	<div class="navbar-header">
-		<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
-			<span class="sr-only">Toggle navigation</span>
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-			<span class="icon-bar"></span>
-		</button>
+		<?php if ($show_return) { ?>
+		<a class="navbar-toggle collapsed" href="javascript:history.go(-1);">返回</a>
+		<?php }?>
 		<a class="navbar-brand" href="#">服务监控</a>
 	</div>
-	<?php if ($show_return) { ?>
-	<div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-		<ul class="nav navbar-nav">
-			<li><a href="javascript:history.go(-1);">返回</a></li>
-		</ul>
-	</div>
-	<?php }?>
 </div>
 </nav>
 
