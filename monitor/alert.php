@@ -1,9 +1,18 @@
 <?php
 
-	define('CURRENT_DIR', dirname(__FILE__).'/');
-	include(CURRENT_DIR.'../base.php');
+define('CURRENT_DIR', dirname(__FILE__).'/');
+include(CURRENT_DIR.'../base.php');
 
-	function parse_worker($filename, $date) {
+class alert {
+	private $_THRESHOD;
+	private $gearman;
+
+    public function __construct($threshod) {
+		$this->_THRESHOD = $threshod;
+        $this->gearman = new GearmanClient();
+    }
+
+	private function parse_worker($filename, $date) {
 		$basename = basename($filename);
 		$basename = explode('_', $basename);
 		array_pop($basename);
@@ -15,7 +24,7 @@
 		return $worker;
 	}
 
-	function parseAndCalculate($file) {
+	private function parseAndCalculate($file) {
 		$log = file_get_contents($file);
 		$log = trim($log);
 		$log = explode("\n", $log);
@@ -54,27 +63,34 @@
 		return $cal_result;
 	}
 
-	while (true) {
-		$currDay = date('Y-m-d', time());
-		$monitor_log = LOG_PATH.'monitor/';
-		foreach (glob($monitor_log."*_{$currDay}.log") as $filename) {
-			$worker = parse_worker($filename, $currDay);
-			$threshod = $_THRESHOD[$worker['host']][$worker['worker']];
-			$result = parseAndCalculate($filename);
-			//Eg: all|127.0.0.1:4730-123/205/200
-			$maillog = $threshod['send_group'].'|'.$worker['host'];
-			
-			$threshod_log = '';
-			$threshod_log .= (isset($result['1min']) && $result['1min']<$threshod) ? $result['1min'] : 'none';
-			$threshod_log .= '/';
-			$threshod_log .= (isset($result['5min']) && $result['5min']<$threshod) ? $result['5min'] : 'none';
-			$threshod_log .= '/';
-			$threshod_log .= (isset($result['15min']) && $result['15min']<$threshod) ? $result['15min'] : 'none';
-			$maillog .= '-'.$threshod_log;
-			if ($threshod_log != 'none/none/none') {
-				//send mail
+	public function run() {
+		while (true) {
+			$currDay = date('Y-m-d', time());
+			$monitor_log = LOG_PATH.'monitor/';
+			foreach (glob($monitor_log."*_{$currDay}.log") as $filename) {
+				$worker = $this->parse_worker($filename, $currDay);
+				$threshod = $this->_THRESHOD[$worker['host']][$worker['worker']];
+				$result = $this->parseAndCalculate($filename);
+				//Eg: all|127.0.0.1:4730-123/205/200
+				$maillog = $threshod['send_group'].'|'.$worker['host'];
+				
+				$threshod_log = '';
+				$threshod_log .= (isset($result['1min']) && $result['1min']<$threshod['1min']) ? $result['1min'].'('.$threshod['1min'].')' : 'none';
+				$threshod_log .= '/';
+				$threshod_log .= (isset($result['5min']) && $result['5min']<$threshod['5min']) ? $result['5min'].'('.$threshod['5min'].')' : 'none';
+				$threshod_log .= '/';
+				$threshod_log .= (isset($result['15min']) && $result['15min']<$threshod['15min']) ? $result['15min'].'('.$threshod['5min'].')' : 'none';
+				$maillog .= '-'.$threshod_log;
+				if ($threshod_log != 'none/none/none') {
+					//send mail
+				}
 			}
-		}
 
-		sleep(60);
+			sleep(60);
+		}
 	}
+
+}
+
+$alert = new alert($_THRESHOD);
+$alert->run();
