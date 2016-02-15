@@ -1,7 +1,5 @@
 <?php
 
-	date_default_timezone_set('Etc/UTC');
-
 	define('CURRENT_DIR', dirname(__FILE__).'/');
 	include(CURRENT_DIR.'../base.php');
 
@@ -15,6 +13,7 @@
 			$status_items = explode("\n", $status_items);
 			array_pop($status_items);
 			array_pop($status_items);
+			$currDay = date('Y-m-d', time());
 			foreach ($status_items as $item) {
 				preg_match_all("/([\w]+)[\s]+([\d]+)[\s]+([\d]+)[\s]+([\d]+)/", $item, $match_item);
 				$item = array(
@@ -23,6 +22,12 @@
 					'processing' => $match_item[3][0],
 					'workers' => $match_item[4][0],
 				);
+
+				$log_file = LOG_PATH."monitor/{$monitor['host']}:{$monitor['port']}_{$item['job']}_{$currDay}.log";
+				$time = date('Y-m-d H:i:s', time());
+				$log_line = $item['workers'] - $item['processing'];
+				$log = "$time|$log_line\n";
+				file_put_contents($log_file, $log, FILE_APPEND);
 			}
 
 			socket_close($socket);
