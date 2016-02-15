@@ -2,6 +2,7 @@
 <html>
 
 <head>
+	<link rel="apple-touch-icon-precomposed" href="<?php echo WEB_DOMAIN;?>resource/img/apple-touch-icon-120x120-precomposed.png" />
 	<meta http-equiv="Content-type" content="text/html; charset=utf-8" />
 	<title>服务负载详情</title>
 </head>
