@@ -4,6 +4,9 @@ define('CURRENT_DIR', dirname(__FILE__).'/');
 include(CURRENT_DIR.'../base.php');
 
 class alert {
+	const LOG_PATH = LOG_PATH;
+	const MAX_RETRY = 50;
+
 	private $_THRESHOD;
 	private $gearman;
 
@@ -11,6 +14,64 @@ class alert {
 		$this->_THRESHOD = $threshod;
         $this->gearman = new GearmanClient();
     }
+
+    /*
+     * Do write log
+     *
+     * */
+	private function do_log($log_type, $log_line='') {
+		switch ($log_type) {
+			case 'alert':
+				$currDay = date('Y-m-d', time());
+				$log_file = self::LOG_PATH."alert_{$currDay}.log";
+
+				$time = date('Y-m-d H:i:s', time());
+				$log = "[$time][$log_line]\n";
+				file_put_contents($log_file, $log, FILE_APPEND);
+				break;
+		}
+		return;
+	}
+
+    /*
+     * Add service worker
+     *
+     * */
+	private function addServer($retry=0) {
+		try {
+        	$this->gearman->addServer(GEARMAN_HOST, GEARMAN_PORT);
+		} catch(GearmanException $e) {
+			$retry++;
+			if ($retry > self::MAX_RETRY) {
+				$log = "Maximum retry times of '".self::MAX_RETRY."' reached, exit the retry process!";
+				$this->do_log('alert', $log);
+				return false;
+			}
+			sleep(6);
+			$log = "Could not add the service server, retry ".$retry;
+			$this->do_log('alert', $log);
+			return $this->addServer($retry);
+		}
+		return true;
+	}
+
+    /*
+     * submit alert mission
+     *
+     * */
+	private function submit_mission($retry=0) {
+		$ping = @$this->gearman->ping('test');
+		$addServer = FALSE;
+		if ($ping == FALSE) {
+			$addServer = $this->addServer();
+		}
+		if ($ping || (!$ping && $addServer)) {
+			$run = $this->gearman->runTasks();
+			return $run;
+		} else {
+			return FALSE;
+		}
+	}
 
 	private function parse_worker($filename, $date) {
 		$basename = basename($filename);
@@ -64,6 +125,12 @@ class alert {
 	}
 
 	public function run() {
+		$addServer = $this->addServer();
+		if (!$addServer) {
+			$log = "Can't add mailer server, Exit the process!";
+			$this->do_log('alert', $log);
+			exit();
+		}
 		while (true) {
 			$currDay = date('Y-m-d', time());
 			$monitor_log = LOG_PATH.'monitor/';
@@ -82,14 +149,22 @@ class alert {
 				$threshod_log .= (isset($result['15min']) && $result['15min']<$threshod['15min']) ? $result['15min'].'('.$threshod['5min'].')' : 'none';
 				$maillog .= '-'.$threshod_log;
 				if ($threshod_log != 'none/none/none') {
-					//send mail
+					$this->gearman->addTaskBackground('mailer_worker', $maillog, 'mailer_worker');
+					$submit = $this->submit_mission();
+					if (!$submit) {
+						$log = "Submit error, exit the process!";
+						$this->do_log('alert', $log);
+						exit();
+					} else {
+						$log = "Submit job";
+						$this->do_log('alert', $log);
+					}
 				}
 			}
 
 			sleep(60);
 		}
 	}
-
 }
 
 $alert = new alert($_THRESHOD);
