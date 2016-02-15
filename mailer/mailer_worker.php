@@ -81,7 +81,7 @@ class mailer_worker {
 
 	private function send_mail($data, $template='template_1.html') {
 		$this->base_mailer->Subject = '负载告警-'.$data['machine'];
-		$this->base_mailer->msgHTML(file_get_contents($template), dirname(__FILE__));
+		$this->base_mailer->msgHTML(file_get_contents(CURRENT_DIR.$template));
 		$this->base_mailer->Body = str_replace('[machine]', $data['machine'], $this->base_mailer->Body);
 		$this->base_mailer->Body = str_replace('[threshold]', $data['threshold'], $this->base_mailer->Body);
 		$this->base_mailer->Body = str_replace('[job_detail]', $data['job_detail'], $this->base_mailer->Body);
@@ -93,7 +93,9 @@ class mailer_worker {
 		$log = $load = $job->workload();
 		$load = explode('|', $load);
 
+		//Todo: 存在test_job Array, 则给test_job组发送邮件, 否则直接发给all
 		$this->set_group($load[0]);
+
 		$tmp_data = explode('-', $load[1]);
 		$data = array(
 			'machine' => $tmp_data[0],
