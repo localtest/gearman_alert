@@ -13,7 +13,7 @@
 <script type="text/javascript" src="http://cdn.hcharts.cn/highcharts/highcharts.js"></script>
 <script type="text/javascript">
 	$(function () {
-    $.getJSON('http://localhost:8080/timeseries.php?job_str=<?php echo $job_str;?>&date=<?php echo $date;?>&callback=?', function (data) {
+    $.getJSON('<?php echo WEB_DOMAIN;?>/timeseries.php?job_str=<?php echo $job_str;?>&date=<?php echo $date;?>&callback=?', function (data) {
         $('#container').highcharts({
             chart: {
                 zoomType: 'x'
