@@ -27,4 +27,6 @@
 		);
 	}
 
+	$title = $job_str.' - 实例';
+	$show_return = true;
 	include(CURRENT_DIR.'template/list.php');
