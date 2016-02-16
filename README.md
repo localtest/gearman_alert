@@ -15,9 +15,9 @@ Gearman Alert
 链接：http://www.zhihu.com/question/23378396/answer/40604931
 来源：知乎
 
-<img src="./intro/001.png" style="width:269px;height:410px;" alt="001"/>
-<img src="./intro/002.png" style="width:269px;height:410px;" alt="002"/>
-<img src="./intro/003.png" style="width:269px;height:410px;" alt="003"/>
+<img src="./intro/001.png" witdh=269 height=410 alt="001"/>
+<img src="./intro/002.png" witdh=269 height=410 alt="002"/>
+<img src="./intro/003.png" witdh=269 height=410 alt="003"/>
 
 Todo:
 
