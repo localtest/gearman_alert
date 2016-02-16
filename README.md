@@ -6,3 +6,15 @@ Gearman Alert
 支持特性:
 
 	1. 历史负载Graph图
+	2. email告警
+
+
+![001](intro/001.png)
+
+Todo:
+
+	1. ES支持
+	2. 短信告警
+
+1. 启动Web Server(可以直接用php 自带的原生Server), 指定根目录为web目录
+2. 发送告警信息，依赖于gearman的分发功能，首先需要部署gearman服务端
