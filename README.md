@@ -9,8 +9,9 @@ Gearman Alert
 	2. email告警
 
 <img src="./intro/001.png" witdh=269 height=410 alt="001"/>
-<img src="./intro/002.png" witdh=269 height=410 alt="002"/>
 <img src="./intro/003.png" witdh=269 height=410 alt="003"/>
+<img src="./intro/004.png" witdh=269 height=410 alt="004"/>
+<img src="./intro/002.png" witdh=269 height=410 alt="002"/>
 
 Todo:
 
