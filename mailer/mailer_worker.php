@@ -62,6 +62,7 @@ class mailer_worker {
 		$this->base_mailer->Username = self::MAILER_USER;
 		$this->base_mailer->Password = self::MAILER_PASSWD;
 		$this->base_mailer->setFrom(self::MAILER_USER, self::MAILER_USER_NAME);
+		$this->base_mailer->CharSet = "utf-8";
 
 		include(CURRENT_DIR.'../config/config_group.php');
 		$this->mail_group = $_MAIL_GROUP;
