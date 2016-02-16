@@ -9,7 +9,15 @@ Gearman Alert
 	2. email告警
 
 
-![001](intro/001.png)
+著作权归作者所有。
+商业转载请联系作者获得授权，非商业转载请注明出处。
+作者：郑宇
+链接：http://www.zhihu.com/question/23378396/answer/40604931
+来源：知乎
+
+<img src="./intro/001.png" style="width:750px;height:1334px;" alt="001" align=left />
+<img src="./intro/002.png" style="width:750px;height:1334px;" alt="002" align=left />
+<img src="./intro/003.png" style="width:750px;height:1334px;" alt="003" align=left />
 
 Todo:
 
