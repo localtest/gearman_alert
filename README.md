@@ -7,6 +7,8 @@ Gearman Alert
 
 	1. 历史负载Graph图
 	2. email告警
+	3. 告警权限组
+	4. last 1min, 5min, 15min阈值设置
 
 <img src="./intro/001.png" witdh=269 height=410 alt="001"/>
 <img src="./intro/003.png" witdh=269 height=410 alt="003"/>
